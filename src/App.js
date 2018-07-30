@@ -1,52 +1,71 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import store from "./store";
-import { AddTodo } from "./store/actions";
+import { AddTodo, ToggleTodo } from "./store/actions";
+
+let todoId = 0;
 
 class App extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            todos: [],
-            newTodoText: ""
-        };
-    }
-
-    componentDidMount() {
-        store.subscribe(() => {
-            this.setState({
-                ...this.state,
-                todos: store.getState().todos
-            });
-        });
-    }
+    state = {
+        newTodoText: ""
+    };
 
     addTodo() {
-        this.props.dispatch({ type: AddTodo, text: this.state.newTodoText });
-        console.log(store.getState().todos);
+        this.props.addTodo(todoId++, this.state.newTodoText);
+
+        this.setState({
+            newTodoText: ""
+        });
     }
 
     onTodoTextChange(event) {
         this.setState({
-            ...this.state,
             newTodoText: event.target.value
         });
+    }
+
+    onKeyPress(event) {
+        if (event.key === "Enter") {
+            this.addTodo();
+        }
+    }
+
+    toggleTodo(id, event) {
+        this.props.toggleTodo(id);
+        console.log(this.props);
     }
 
     render() {
         return (
             <div className="App">
-                <h1>Hello World</h1>
-                <div>{this.state.todos.map(todo => <p key={todo.text}>{todo.text}</p>)}</div>
+                <h1>Todo List</h1>
+                <input onChange={this.onTodoTextChange.bind(this)} onKeyPress={this.onKeyPress.bind(this)} value={this.state.newTodoText} />
                 <br />
-                <input onChange={this.onTodoTextChange.bind(this)} />
+                <div>
+                    {this.props.todos.map(todo => (
+                        <p className={todo.completed ? "completed" : ""} onClick={e => this.toggleTodo(todo.id, e)} key={todo.id}>
+                            {todo.text}
+                        </p>
+                    ))}
+                </div>
+                <br />
                 <button onClick={this.addTodo.bind(this)}>Add Todo</button>
             </div>
         );
     }
 }
 
-App = connect()(App);
+const mapStateToProps = state => ({
+    todos: state.todos
+});
+
+const mapDispatchToProps = dispatch => ({
+    addTodo: (id, text) => dispatch(AddTodo(id, text)),
+    toggleTodo: id => dispatch(ToggleTodo(id))
+});
+
+App = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(App);
 
 export default App;
