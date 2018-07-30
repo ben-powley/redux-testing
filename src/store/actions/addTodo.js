@@ -1,7 +1,8 @@
-const addTodo = text => {
+const addTodo = (id, text) => {
     return {
         type: "ADD_TODO",
-        text
+        text,
+        id
     };
 };
 
