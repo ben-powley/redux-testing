@@ -1,5 +1,10 @@
 const initialState = {
-    todos: []
+    todos: [
+        {
+            id: 1,
+            title: "Hello World"
+        }
+    ]
 };
 
 const todoReducer = (state = initialState, action) => {
