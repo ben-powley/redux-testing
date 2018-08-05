@@ -20,16 +20,23 @@ class App extends Component {
     render() {
         return (
             <div className="App">
-                <h1>Hello World</h1>
-                <button onClick={this.onAddTodoClick}>Add todo</button>
-                {this.props.todos.map(todo => <li key={todo.id}>{todo.title}</li>)}
+                {this.props.posts.map((post, index) => (
+                    <div key={index} className="blog-post">
+                        <h2>{post.title}</h2>
+                        <figure>
+                            <img src={post.image} alt={post.title} />
+                        </figure>
+                        <p>{post.content}</p>
+                    </div>
+                ))}
             </div>
         );
     }
 }
 
 const mapStateToProps = state => ({
-    todos: state.todos
+    todos: state.todos,
+    posts: state.posts
 });
 
 const mapDispatchToProps = dispatch => ({
